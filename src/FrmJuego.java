@@ -1,4 +1,5 @@
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.WindowConstants;
 import java.awt.event.ActionListener;
 import java.awt.Color;
@@ -11,6 +12,7 @@ public class FrmJuego extends JFrame {
     
     private JPanel pnlJugador1, pnlJugador2;
     private Jugador jugador1, jugador2;
+    private JTabbedPane tpJugadores;
 
     public FrmJuego() {
 
@@ -35,7 +37,7 @@ public class FrmJuego extends JFrame {
         pnlJugador2.setLayout(null);
         pnlJugador2.setBackground(new Color(0, 255, 255));
 
-        JTabbedPane tpJugadores = new JTabbedPane();
+        tpJugadores = new JTabbedPane();
         tpJugadores.addTab("Marin Estrada Contreras", pnlJugador1);
         tpJugadores.addTab("Marin Estrada Contreras", pnlJugador2);
 
@@ -74,7 +76,15 @@ public class FrmJuego extends JFrame {
     }
 
     private void verificar() {
+        switch (tpJugadores.getSelectedIndex()) {
+            case 0:
+                JOptionPane.showMessageDialog(null, jugador1.getGrupos());
+                break;
         
+            case 1:
+                JOptionPane.showMessageDialog(null, jugador2.getGrupos());
+                break;
+        }
     }
 
 }

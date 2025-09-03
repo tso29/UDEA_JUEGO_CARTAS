@@ -23,7 +23,7 @@ public class Carta {
 
         lblCarta.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent me) {
-                JOptionPane.showMessageDialog(null, " de " + getPinta());
+                JOptionPane.showMessageDialog(null, getNombre() + " de " + getPinta());
             }
         });
     }
@@ -42,6 +42,17 @@ public class Carta {
     }
 
     public NombreCarta getNombre(){
+        int residuo = indice % 13;
+        int posicion = residuo == 0? 12: residuo - 1;
         
+        /*
+        * if (residuo == 0) {
+        *    posicion = 12;
+        * } else {
+        *     posicion = residuo - 1;
+        *}
+        */
+
+        return NombreCarta.values()[posicion];
     }
 }

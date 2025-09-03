@@ -30,4 +30,43 @@ public class Jugador {
         }
         pnl.repaint();
     }
+
+    public String getGrupos() {
+        String resultado = "No se encontraron grupos";
+        // Calcular los contadores de las cartas
+        int[] contadores = new int[NombreCarta.values().length];
+        for (Carta carta : cartas) {
+            contadores[carta.getNombre().ordinal()]++;
+        }
+
+        // validar si hubo grupos
+        boolean hayGrupos = false;
+        for (int contador : contadores) {
+            if(contador >= 2){
+                hayGrupos = true;
+                break;
+            }
+        }
+
+        // obtener los grupos
+        if(hayGrupos) {
+            resultado = "Se hallaron los siguientes grupos:\n";
+            int p = 0;
+            for (int contador : contadores) {
+                if (contador >= 2) {
+                    resultado += Grupo.values()[contador] + " de " + NombreCarta.values()[p] + "\n";
+                }
+                p++;
+            }
+
+            // for (int i =0; i < contadores.length; i++) {
+            //     int contador = contadores[i];
+            //     if (contador >= 2){
+            //         resultado += Grupo.values()[contador] + " de " + NombreCarta.values()[i] + "\n";
+            //     }
+            // }
+        }
+
+        return resultado;
+    }
 }
