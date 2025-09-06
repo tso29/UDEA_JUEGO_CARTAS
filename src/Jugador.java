@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Random;
 import javax.swing.JPanel;
 
@@ -67,6 +70,61 @@ public class Jugador {
             // }
         }
 
+        // Encontrar escalera
+        List<String> escaleras = new ArrayList<>();
+
+        for (Pinta pinta : Pinta.values()) {
+            // Filtrar cartas de una misma pinta
+            List<Carta> cartasPinta = new ArrayList<>();
+            for (Carta c : cartas) {
+                if (c.getPinta() == pinta) {
+                    cartasPinta.add(c);
+                }
+            }
+
+            // Ordenar por valor
+            cartasPinta.sort(Comparator.comparingInt(c -> c.getNombre().ordinal()));
+
+            // Buscar secuencias consecutivas desde 2 pares
+            int consecutivas = 1;
+            int inicio = 0;
+
+            for (int i = 1; i < cartasPinta.size(); i++) {
+                int valorPrev = cartasPinta.get(i - 1).getNombre().ordinal();
+                int valorAct = cartasPinta.get(i).getNombre().ordinal();
+
+                if (valorAct == valorPrev + 1) {
+                    consecutivas++;
+                    if (consecutivas >= 2) {
+                        escaleras.add(Grupo.values()[consecutivas] + " de " + pinta +
+                        " desde " + cartasPinta.get(i - consecutivas + 1).getNombre() +
+                        " hasta " + cartasPinta.get(i).getNombre());
+                    }
+                } else {
+                    consecutivas = 1;
+                    inicio = i;
+                }
+            }
+
+        }
+
+        if (!escaleras.isEmpty()) {
+            if (escaleras.size() == 1) {
+                resultado += "Se halló la siguiente escalera:\n";
+            } else {
+                resultado += "Se hallaron las siguientes escaleras:\n";
+            }
+            for (String e : escaleras) {
+                resultado += "- " + e + "\n";
+            }
+        }
+
+        if (escaleras.isEmpty()) {
+            resultado += "No es encontraron escaleras.";
+        }
+
         return resultado;
+
+        
     }
 }
