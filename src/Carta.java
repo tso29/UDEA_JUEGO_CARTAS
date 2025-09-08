@@ -55,4 +55,16 @@ public class Carta {
 
         return NombreCarta.values()[posicion];
     }
+
+    public int getValorCarta(NombreCarta nombre) {
+        switch (nombre) {
+            case AS:
+            case JACK:
+            case QUEEN:
+            case KING:
+                return 10;        
+            default:
+                return nombre.ordinal() + 1; // valores numéricos normales
+        }
+    }
 }

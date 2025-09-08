@@ -47,20 +47,20 @@ public class Jugador {
         // validar si hubo grupos
         boolean hayGrupos = false;
         for (int contador : contadores) {
-            if(contador >= 2){
+            if (contador >= 2) {
                 hayGrupos = true;
                 break;
             }
         }
 
         // obtener los grupos
-        if(hayGrupos) {
+        if (hayGrupos) {
             resultado = "Se hallaron los siguientes grupos:\n";
             int p = 0;
             for (int contador : contadores) {
                 if (contador >= 2) {
                     resultado += Grupo.values()[contador] + " de " + NombreCarta.values()[p] + "\n";
-                
+
                     // marcas las cartas que han sido usadas
                     for (int j = 0; j < cartas.length; j++) {
                         if (cartas[j].getNombre() == NombreCarta.values()[p]) {
@@ -72,51 +72,56 @@ public class Jugador {
             }
 
             // for (int i =0; i < contadores.length; i++) {
-            //     int contador = contadores[i];
-            //     if (contador >= 2){
-            //         resultado += Grupo.values()[contador] + " de " + NombreCarta.values()[i] + "\n";
-            //     }
+            // int contador = contadores[i];
+            // if (contador >= 2){
+            // resultado += Grupo.values()[contador] + " de " + NombreCarta.values()[i] +
+            // "\n";
+            // }
             // }
         }
 
         // Encontrar escalera
-        List<String> escaleras = new ArrayList<>();
+        String[] escaleras = new String[10];
+        int totalEscaleras = 0;
 
         for (Pinta pinta : Pinta.values()) {
-            // Filtrar cartas de una misma pinta
-            List<Carta> cartasPinta = new ArrayList<>();
-            for (Carta c : cartas) {
-                if (c.getPinta() == pinta) {
-                    cartasPinta.add(c);
+            int[] indicesPinta = new int[cartas.length];
+            int count = 0; // cuenta cartas encontradas
+
+            for (int i = 0; i < cartas.length; i++) {
+                if (cartas[i].getPinta() == pinta) {
+                    indicesPinta[count] = i; // guardo el índice
+                    count++;
                 }
             }
 
             // Ordenar por valor
-            cartasPinta.sort(Comparator.comparingInt(c -> c.getNombre().ordinal()));
+            for (int i = 0; i < count - 1; i++) {
+                for (int j = 0; j < count - i - 1; j++) {
+                    int valor1 = cartas[indicesPinta[j]].getNombre().ordinal();
+                    int valor2 = cartas[indicesPinta[j + 1]].getNombre().ordinal();
+                    if (valor1 > valor2) {
+                        int temp = indicesPinta[j];
+                        indicesPinta[j] = indicesPinta[j + 1];
+                        indicesPinta[j + 1] = temp;
+                    }
+                }
+            }
 
             // Buscar secuencias consecutivas desde 2 pares
-            int consecutivas = 1;            
+            int consecutivas = 1;
 
-            for (int i = 1; i < cartasPinta.size(); i++) {
-                int valorPrev = cartasPinta.get(i - 1).getNombre().ordinal();
-                int valorAct = cartasPinta.get(i).getNombre().ordinal();
+            for (int i = 1; i < count; i++) {
+                int valorPrev = cartas[indicesPinta[i - 1]].getNombre().ordinal();
+                int valorAct = cartas[indicesPinta[i]].getNombre().ordinal();
 
                 if (valorAct == valorPrev + 1) {
                     consecutivas++;
                     if (consecutivas >= 2) {
-                        escaleras.add(Grupo.values()[consecutivas] + " de " + pinta +
-                        " desde " + cartasPinta.get(i - consecutivas + 1).getNombre() +
-                        " hasta " + cartasPinta.get(i).getNombre());
-                    
-                        // marcar cartas usadas
-                        for(int j = i - consecutivas +1; j <= i; j++) {
-                            Carta cartaUsada = cartasPinta.get(j);
-                            for (int k = 0; k < cartas.length; k++) {
-                                if (cartas[k] == cartaUsada) {
-                                    cartasUsadas[k] = true;
-                                }
-                            }
-                        }
+                        escaleras[totalEscaleras] = Grupo.values()[consecutivas] + " de " + pinta +
+                                " desde " + cartas[indicesPinta[i - consecutivas + 1]].getNombre() +
+                                " hasta " + cartas[indicesPinta[i]].getNombre();
+                        totalEscaleras++;
                     }
                 } else {
                     consecutivas = 1;
@@ -125,56 +130,47 @@ public class Jugador {
 
         }
 
-        if (!escaleras.isEmpty()) {
-            if (escaleras.size() == 1) {
+        if (totalEscaleras > 0) {
+            resultado += "\n";
+            if (totalEscaleras == 1) {
                 resultado += "Se halló la siguiente escalera:\n";
             } else {
                 resultado += "Se hallaron las siguientes escaleras:\n";
             }
-            for (String e : escaleras) {
-                resultado += "- " + e + "\n";
+            for (int i = 0; i < totalEscaleras; i++) {
+                resultado += "- " + escaleras[i] + "\n";
             }
-        }
-
-        if (escaleras.isEmpty()) {
-            resultado += "No es encontraron escaleras.";
+        } else {
+            resultado += "No se encontraron escaleras.\n";
         }
 
         // Cartas que sobran
-        List<Carta> cartasSobrantes = new ArrayList<>();
+        Carta[] cartasSobrantes = new Carta[cartas.length]; // como máximo pueden sobrar todas
+        int totalSobrantes = 0;
+
         for (int i = 0; i < cartas.length; i++) {
             if (!cartasUsadas[i]) {
-                cartasSobrantes.add(cartas[i]);
+                cartasSobrantes[totalSobrantes] = cartas[i];
+                totalSobrantes++;
             }
         }
 
-        if (!cartasSobrantes.isEmpty()) {
+        if (totalSobrantes > 0) {
+            resultado += "\n";
             resultado += "Cartas que sobran:\n";
             int puntosCartasSobrantes = 0;
 
-            for (Carta c : cartasSobrantes) {
-                resultado += "- " + c.getNombre() + " de " + c.getPinta() +"\n";
-                puntosCartasSobrantes += getValorCarta(c.getNombre()); // Aqui se suman los puntos
+            for (int i = 0; i < totalSobrantes; i++) {
+                Carta c = cartasSobrantes[i];
+                resultado += "- " + c.getNombre() + " de " + c.getPinta() + "\n";
+                puntosCartasSobrantes += c.getValorCarta(c.getNombre()); // Aqui se suman los puntos
             }
 
             resultado += "Puntos: " + puntosCartasSobrantes + "\n";
-        }        
+        }
 
         return resultado;
 
-        
     }
 
-    public int getValorCarta(NombreCarta nombre) {
-        switch (nombre) {
-            case AS:
-            case JACK:
-            case QUEEN:
-            case KING:
-                return 10;        
-            default:
-                // Mantener las demás cartas
-                return nombre.ordinal() + 1;
-        }
-    }
 }
