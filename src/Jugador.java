@@ -56,7 +56,14 @@ public class Jugador {
             int p = 0;
             for (int contador : contadores) {
                 if (contador >= 2) {
-                    resultado += Grupo.values()[contador] + " de " + NombreCarta.values()[p] + "\n";
+                    String valorCarta = "";
+                    for (Carta c : cartas) {
+                        if (c.getNombre() == NombreCarta.values()[p]) {
+                            valorCarta = c.getValorTexto();
+                            break;
+                        }
+                    }
+                    resultado += Grupo.values()[contador] + " de " + valorCarta + "\n";
 
                     // marcas las cartas que han sido usadas
                     for (int j = 0; j < cartas.length; j++) {
@@ -67,14 +74,6 @@ public class Jugador {
                 }
                 p++;
             }
-
-            // for (int i =0; i < contadores.length; i++) {
-            // int contador = contadores[i];
-            // if (contador >= 2){
-            // resultado += Grupo.values()[contador] + " de " + NombreCarta.values()[i] +
-            // "\n";
-            // }
-            // }
         }
 
         // Encontrar escalera
@@ -109,15 +108,15 @@ public class Jugador {
             int consecutivas = 1;
 
             for (int i = 1; i < count; i++) {
-                int valorPrev = cartas[indicesPinta[i - 1]].getNombre().ordinal();
-                int valorAct = cartas[indicesPinta[i]].getNombre().ordinal();
+                int valorPrev = cartas[indicesPinta[i - 1]].getValor();
+                int valorAct = cartas[indicesPinta[i]].getValor();
 
                 if (valorAct == valorPrev + 1) {
                     consecutivas++;
                     if (consecutivas >= 2) {
                         escaleras[totalEscaleras] = Grupo.values()[consecutivas] + " de " + pinta +
-                                " desde " + cartas[indicesPinta[i - consecutivas + 1]].getNombre() +
-                                " hasta " + cartas[indicesPinta[i]].getNombre();
+                                " desde " + cartas[indicesPinta[i - consecutivas + 1]].getValorTexto() +
+                                " hasta " + cartas[indicesPinta[i]].getValorTexto();
                         totalEscaleras++;
                     }
                 } else {
@@ -159,8 +158,8 @@ public class Jugador {
 
             for (int i = 0; i < totalSobrantes; i++) {
                 Carta c = cartasSobrantes[i];
-                resultado += "- " + c.getNombre() + " de " + c.getPinta() + "\n";
-                puntosCartasSobrantes += c.getValorCarta(c.getNombre()); // Aqui se suman los puntos
+                resultado += "- " + c.getValorTexto() + " de " + c.getPinta() + "\n";
+                puntosCartasSobrantes += c.getValor(); // Aqui se suman los puntos
             }
 
             resultado += "Puntos: " + puntosCartasSobrantes + "\n";

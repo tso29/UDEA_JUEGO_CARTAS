@@ -56,6 +56,22 @@ public class Carta {
         return NombreCarta.values()[posicion];
     }
 
+    // Obtener valor de las cartas a numeros
+    public int getValor() {
+        return getNombre().ordinal() + 1;
+    }
+
+    public String getValorTexto() {
+        switch (getNombre()) {
+            case AS: return "A";
+            case JACK: return "J";
+            case QUEEN: return "Q";
+            case KING: return "K";
+            default: return String.valueOf(getValor());
+        }
+        // return getNombre().ordinal() + 1;
+    }
+
     public int getValorCarta(NombreCarta nombre) {
         switch (nombre) {
             case AS:
